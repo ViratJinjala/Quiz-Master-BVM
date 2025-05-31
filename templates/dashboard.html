@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+{% block content%}
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Quiz Master</a>
+            <div class="d-flex align-items-center">
+                <input type="search" class="form-control search-box me-3" placeholder="Search...">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle welcome-text" href="#" role="button" data-bs-toggle="dropdown">
+                        Welcome {{ current_user.name }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav> 
+
+    <!-- Main Navigation -->
+    <div class="container-fluid border-bottom">
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/dashboard">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/scores">Scores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Summary</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div> 
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Available Quizzes</span>
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary btn-sm" onclick="sortQuizzes('date')">Sort by Date</button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="sortQuizzes('subject')">Sort by Subject</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Quiz Name</th>
+                            <th>Subject</th>
+                            <th>Chapter</th>
+                            <th>Date</th>
+                            <th>Duration</th>
+                            <th>Questions</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for quiz in quizzes %}
+                        <tr>
+                            <td>{{ quiz.name }}</td>
+                            <td>{{ quiz.subject_name }}</td>
+                            <td>{{ quiz.chapter_name }}</td>
+                            <td>{{ quiz.date_of_quiz }}</td>
+                            <td>{{ quiz.time_duration }}</td>
+                            <td>{{ quiz.question_count }}</td>
+                            <td>
+                                <button type="button" 
+                                        class="btn btn-view me-2" 
+                                        onclick="viewQuizDetails('{{ quiz.id }}')">
+                                    View
+                                </button>
+                                <button type="button"
+                                        class="btn btn-start" 
+                                        onclick="window.location.href='/start_quiz/{{ quiz.id }}'">
+                                    Start
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div> 
+
+    <!-- Quiz Details Modal -->
+    <div class="modal fade" id="quizDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="quizDetailsModalLabel">Quiz Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="quiz-details">
+                        <div class="row mb-3">
+                            <div class="col-4 text-primary">Subject:</div>
+                            <div class="col-8 quiz-subject"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4 text-primary">Chapter:</div>
+                            <div class="col-8 quiz-chapter"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4 text-primary">Questions:</div>
+                            <div class="col-8 quiz-questions"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4 text-primary">Duration:</div>
+                            <div class="col-8 quiz-duration"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="startQuizFromModal()">Start Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Result Modal -->
+    <div class="modal fade" id="quizResultModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Quiz Results</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="result-circle">
+                        <span class="score-text" id="resultScore">0%</span>
+                    </div>
+                    <div class="mt-3">
+                        <span class="badge bg-primary result-badge" id="resultTotal"></span>
+                        <span class="badge bg-success result-badge" id="resultCorrect"></span>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="location.reload()">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Store quiz data -->
+    <input type="hidden" id="quizzesData" value='{{ quizzes|tojson|safe }}'>
+    
+    <!-- Add this for flash messages -->
+    <input type="hidden" id="flashMessages" value='{{ get_flashed_messages()|tojson|safe }}'>
+{% endblock %}
+
+{% block script %}
+    <!-- Then load your dashboard.js -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

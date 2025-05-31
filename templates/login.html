@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block head %}
+<title>Quiz Master</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+{% block content%}
+<div class="card">
+    <h3 class="text-center brand-title">Quiz Master</h3>
+    <div id="form-container">
+        <!-- Login Form -->
+        <div id="login-form">
+            <h5 class="text-center">Login</h5>
+            <div class="card-inner">
+                <form action="{{ url_for('login') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="login-email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="login-email" name="login-email"
+                            placeholder="Enter your email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="login-password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="login-password" name="login-password"
+                            placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <div class="switch-container">
+                        <span class="switch-text">Don't have an account? </span>
+                        <span class="form-switch" id="toggle-register">Create new user</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Registration Form -->
+        <div id="register-form" style="display: none;">
+            <h5 class="text-center">Registration</h5>
+            <form action="{{ url_for('register') }}" method="POST">
+                <div class="row g-2">
+                    <div class="col-md-6 mb-3">
+                        <label for="register-email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="register-email" name="register-email"
+                            placeholder="Enter your email" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="register-password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="register-password" name="register-password"
+                            placeholder="Enter password" required>
+                    </div>
+                </div>
+                <div class="row g-2">
+                    <div class="col-md-6 mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name"
+                            required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="dob" class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" id="dob" name="dob" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="qualification" class="form-label">Qualification</label>
+                    <select class="form-select" id="qualification" name="qualification" required>
+                        <option value="" selected disabled>Select your qualification</option>
+                        <option value="high_school">High School</option>
+                        <option value="bachelor">Bachelor's Degree</option>
+                        <option value="master">Master's Degree</option>
+                        <option value="phd">Ph.D.</option>
+                        <option value="diploma">Diploma</option>
+                        <option value="certificate">Professional Certificate</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Submit</button>
+                <div class="switch-container">
+                    <span class="switch-text">Already have an account? </span>
+                    <span class="form-switch" id="toggle-login">Login here</span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+{% endblock %}
