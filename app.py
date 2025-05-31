@@ -375,7 +375,7 @@ def upload_questions(quiz_id):
             return redirect(url_for('admin_quiz_management'))
         if not file.filename.endswith('.csv'):
             if file.filename.endswith('.pdf'):
-                client = genai.Client(api_key="AIzaSyB3slxKI3rgCTesvAByFu8iVwnjiUsdpSw")
+                client = genai.Client(api_key="")
                 
                 # Save the uploaded PDF file to a temporary file
                 with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
