@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <title>Quiz Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_quiz_management.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+        <div class="navbar-nav me-auto">
+            <a class="nav-link" href="/admin_dashboard">Home</a>
+            <a class="nav-link" href="/admin_quiz_management">Quiz</a>
+            <a class="nav-link" href="#">Summary</a>
+            <a class="nav-link" href="/logout">Logout</a>
+        </div>
+        <div class="d-flex align-items-center">
+            <input type="search" class="form-control search-box me-3" placeholder="Search...">
+            <span class="welcome-text">Welcome Admin</span>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main-content">
+    {% for quiz in quizzes %}
+    <div class="subject-card">
+        <!-- Quiz Header with Dropdown Button -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h2 class="subject-title">{{ quiz.subject_name }} - {{ quiz.chapter_name }}</h2>
+                <div class="quiz-info">
+                    <span class="badge bg-primary">Quiz {{ quiz.id }}</span>
+                    <span class="badge bg-info">Date: {{ quiz.date_of_quiz }}</span>
+                    <span class="badge bg-success">Duration: {{ quiz.time_duration }} mins</span>
+                </div>
+            </div>
+            <button class="btn btn-outline-primary" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#quizCollapse-{{ quiz.id }}" 
+                    aria-expanded="false">
+                <i class="fas fa-chevron-down"></i> Show Questions
+            </button>
+        </div>
+
+        <!-- Collapsible Questions Section -->
+        <div class="collapse" id="quizCollapse-{{ quiz.id }}">
+            <div class="chapter-header">
+                <div class="row">
+                    <div class="col-9">Question Details</div>
+                    <div class="col-3">Action</div>
+                </div>
+            </div>
+            
+            {% for question in quiz.questions %}
+            <div class="chapter-row">
+                <!-- Hidden input for question ID -->
+                <input type="hidden" name="question_id" value="{{ question.id }}">
+                
+                <div class="col-9">
+                    <div class="question-text">{{ question.title }} ({{ question.weightage }}) </div>
+                    <div class="options-list">
+                        <div class="option {% if question.correct_option == 1 %}correct{% endif %}">1. {{ question.option1 }}</div>
+                        <div class="option {% if question.correct_option == 2 %}correct{% endif %}">2. {{ question.option2 }}</div>
+                        <div class="option {% if question.correct_option == 3 %}correct{% endif %}">3. {{ question.option3 }}</div>
+                        <div class="option {% if question.correct_option == 4 %}correct{% endif %}">4. {{ question.option4 }}</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-outline-primary btn-action" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#editQuestionModal-{{ question.id }}"
+                            data-question-id="{{ question.id }}">
+                        Edit
+                    </button>
+                    <form action="{{ url_for('delete_question', question_id=question.id) }}" 
+                          method="POST" 
+                          class="d-inline">
+                        <button type="submit" class="btn btn-outline-danger btn-action">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2 mt-3">
+                <button type="button" class="btn-add-chapter" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#addQuestionModal-{{ quiz.id }}">
+                    + Add Question
+                </button>
+                <button type="button" class="btn-add-chapter" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#uploadQuestionsModal-{{ quiz.id }}">
+                    Upload Questions
+                </button>
+            </div>
+        </div>
+
+        <!-- CSV Upload Modal for this quiz -->
+        <div class="modal fade" id="uploadQuestionsModal-{{ quiz.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Upload File</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ url_for('upload_questions', quiz_id=quiz.id) }}" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label">Select File</label>
+                                <input type="file" class="form-control" name="questions_file" accept=".csv" required>
+                            </div>
+                            <div class="mb-3">
+                                <a href="{{ url_for('download_template') }}" class="text-primary">Download Expected format Template</a>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload Questions</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="add-subject-container">
+        <button class="btn-add-subject-main" data-bs-toggle="modal" data-bs-target="#addQuizModal">
+            + Create New Quiz
+        </button>
+    </div>
+</div>
+
+<!-- Add Question Modal Template -->
+{% for quiz in quizzes %}
+<div class="modal fade" id="addQuestionModal-{{ quiz.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-warning">Add New Question</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('add_question', quiz_id=quiz.id) }}" 
+                      method="POST" 
+                      id="addQuestionForm-{{ quiz.id }}"
+                      onsubmit="submitQuestionForm(event, this)">
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Question Statement:</label>
+                        <input type="text" class="form-control" name="question_statement" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Options:</label>
+                        {% for i in range(1, 5) %}
+                        <div class="input-group mb-2">
+                            <span class="input-group-text">{{ i }}</span>
+                            <input type="text" class="form-control" name="option{{ i }}" required>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Correct Option:</label>
+                        <select class="form-select" name="correct_option" required>
+                            {% for i in range(1, 5) %}
+                            <option value="{{ i }}">Option {{ i }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Weightage:</label>
+                        <input type="number" class="form-control" name="weightage" value=1 required>
+                    </div>
+                    <div class="d-flex justify-content-start gap-3">
+                        <button type="submit" class="btn btn-save">Save</button>
+                        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Add Quiz Modal -->
+<div class="modal fade" id="addQuizModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-warning">New Quiz</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('add_quiz') }}" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Subject:</label>
+                        <select class="form-select" id="subject-select" required>
+                            <option value="">Select Subject</option>
+                            {% for subject in subjects %}
+                                <option value="{{ subject.id }}">{{ subject.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Chapter:</label>
+                        <select class="form-select" name="chapter_id" id="chapter-select" required>
+                            <option value="">Select Chapter</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Quiz Date:</label>
+                        <input type="date" class="form-select" name="quiz_date" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Duration (minutes):</label>
+                        <input type="number" class="form-select" name="quiz_duration" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Passing Score (%):</label>
+                        <input type="number" class="form-select" name="passing_score" min="0" max="100" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Maximum Attempts:</label>
+                        <input type="number" class="form-select" name="max_attempts" min="1" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Instructions:</label>
+                        <textarea class="form-control" name="instructions"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-primary">Status:</label>
+                        <select class="form-select" name="status" required>
+                            <option value="draft">Draft</option>
+                            <option value="published">Published</option>
+                            <option value="scheduled">Scheduled</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-start gap-3">
+                        <button type="submit" class="btn btn-save">Save</button>
+                        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+    <script src="{{ url_for('static', filename='js/admin_quiz_management.js') }}"></script>
+    <script>
+    document.getElementById('subject-select').addEventListener('change', function() {
+        const subjectId = this.value;
+        const chapterSelect = document.getElementById('chapter-select');
+        
+        if (subjectId) {
+            fetch(`/get_chapters/${subjectId}`)
+                .then(response => response.json())
+                .then(chapters => {
+                    chapterSelect.innerHTML = '<option value="">Select Chapter</option>';
+                    chapters.forEach(chapter => {
+                        chapterSelect.innerHTML += `<option value="${chapter.id}">${chapter.name}</option>`;
+                    });
+                    chapterSelect.disabled = false;
+                });
+        } else {
+            chapterSelect.innerHTML = '<option value="">Select Chapter</option>';
+            chapterSelect.disabled = true;
+        }
+    });
+    </script>
+{% endblock %}

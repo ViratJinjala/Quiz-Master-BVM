@@ -1,0 +1,557 @@
+/* Add these styles to your existing styles.css */
+
+/* Quiz Management specific styles */
+.container-fluid {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.text-primary {
+    color: #0d6efd !important;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    background: white;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    border: none;
+    padding: 1rem 1.5rem;
+}
+
+.card-header.bg-primary {
+    background: linear-gradient(45deg, #0d6efd, #0099ff) !important;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    color: #0d6efd;
+    font-weight: 600;
+    border-top: none;
+    padding: 1rem;
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #0d6efd, #0099ff);
+    border: none;
+}
+
+.btn-success {
+    background: linear-gradient(45deg, #198754, #28a745);
+    border: none;
+}
+
+.btn-outline-primary {
+    border-color: #0d6efd;
+    color: #0d6efd;
+}
+
+.btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-danger:hover {
+    transform: translateY(-2px);
+    color: white !important;
+}
+
+.btn-save {
+    background: linear-gradient(45deg, #198754, #28a745);
+    color: white;
+    border: none;
+    padding: 0.5rem 2rem;
+}
+
+.btn-cancel {
+    background: linear-gradient(45deg, #dc3545, #bb2d3b);
+    color: white;
+    border: none;
+    padding: 0.5rem 2rem;
+}
+
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 500;
+    border-radius: 6px;
+}
+
+.badge.bg-light {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #0d6efd !important;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border: none;
+    border-radius: 15px 15px 0 0;
+    background: linear-gradient(45deg, #0d6efd, #0099ff);
+    padding: 1.5rem;
+}
+
+.modal-title {
+    color: white !important;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #dee2e6;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.nav-pills .nav-link {
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    color: #6c757d;
+}
+
+.nav-pills .nav-link.active {
+    background: linear-gradient(45deg, #0d6efd, #0099ff);
+}
+
+.form-control[type="search"] {
+    min-width: 300px;
+}
+
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 15px;
+    }
+    
+    .form-control[type="search"] {
+        min-width: 200px;
+    }
+}
+
+/* Copy all styles from admin_dashboard.css and add these specific styles */
+
+.chapter-row small {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.input-group-text {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+    border: 2px solid #dee2e6;
+    border-right: none;
+}
+
+.input-group .form-control {
+    border-left: none;
+}
+
+.form-select {
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.6rem;
+}
+
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.hover-text-white:hover {
+    color: white !important;
+}
+
+/* Rest of the styles from admin_dashboard.css */
+
+/* Base styles from admin_dashboard.css */
+body {
+    background: #f8f9fa;
+    min-height: 100vh;
+    color: #212529;
+}
+
+.navbar {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 0.8rem 1rem;
+    background-color: #e3f2fd;
+}
+
+.nav-link {
+    color: #198754 !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: #0d6efd !important;
+}
+
+.welcome-text {
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+.main-content {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Quiz specific styles */
+.subject-card {
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.subject-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 0.5rem;
+}
+
+.quiz-info {
+    margin-bottom: 1rem;
+}
+
+.quiz-info .badge {
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+
+.question-text {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.options-list {
+    padding-left: 0.5rem;
+}
+
+.option {
+    padding: 0.3rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.option.correct {
+    color: #198754;
+    font-weight: 500;
+}
+
+.btn-action {
+    padding: 0.4rem 1rem;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.btn-add-chapter {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.btn-add-chapter:hover {
+    background-color: #d0e3ff;
+    transform: translateY(-1px);
+}
+
+.btn-add-subject-main {
+    background: #0d6efd;
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-add-subject-main:hover {
+    background: #0b5ed7;
+    transform: translateY(-1px);
+}
+
+/* Form styles */
+.form-control {
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.6rem;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.search-box {
+    max-width: 200px;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+}
+
+/* Modal styles */
+.modal-content {
+    border: none;
+    border-radius: 15px;
+}
+
+.modal-header {
+    border: none;
+    padding: 1.5rem 1.5rem 1rem;
+}
+
+.modal-body {
+    padding: 1rem 1.5rem 1.5rem;
+}
+
+.btn-save {
+    background: #0d6efd;
+    color: white;
+    border: none;
+    padding: 0.5rem 2rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-save:hover {
+    background: #0b5ed7;
+}
+
+.btn-cancel {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: none;
+    padding: 0.5rem 2rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+    background: #e9ecef;
+}
+
+/* Quiz-specific styles that extend admin_dashboard.css */
+.quiz-info {
+    margin-bottom: 1rem;
+}
+
+.quiz-info .badge {
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+
+.question-text {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.options-list {
+    padding-left: 0.5rem;
+}
+
+.option {
+    padding: 0.3rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.option.correct {
+    color: #198754;
+    font-weight: 500;
+}
+
+.btn-action {
+    padding: 0.4rem 1rem;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Modal-specific styles */
+.input-group-text {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+    border: 2px solid #dee2e6;
+    border-right: none;
+}
+
+.input-group .form-control {
+    border-left: none;
+}
+
+.form-select {
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.6rem;
+}
+
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Quiz-specific styles only */
+.quiz-info {
+    margin-bottom: 1rem;
+}
+
+.quiz-info .badge {
+    margin-right: 0.5rem;
+}
+
+.question-text {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.options-list {
+    margin-top: 0.5rem;
+}
+
+.option {
+    padding: 0.3rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.option.correct {
+    color: #198754;
+    font-weight: 500;
+}
+
+/* Match admin_dashboard button styles */
+.btn-outline-primary, 
+.btn-outline-danger {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.9rem;
+}
+
+.btn-add-chapter {
+    background-color: #ffcdd2;
+    color: #d32f2f;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.btn-add-chapter:hover {
+    background-color: #ffb3b3;
+}
+
+.add-subject-container {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.btn-add-subject-main {
+    background: #ff9800;
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.btn-add-subject-main:hover {
+    background: #f57c00;
+}
+
+/* Match chapter header style */
+.chapter-header {
+    background: #e7f1ff;
+    color: #0d6efd;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.chapter-row {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Match subject card style */
+.subject-card {
+    background: white;
+    border: 2px solid #dee2e6;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+}
+
+.subject-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #212529;
+}
+
+.collapse {
+    transition: all 0.3s ease;
+}
+
+.btn[data-bs-toggle="collapse"] {
+    transition: all 0.3s ease;
+}
+
+.btn[data-bs-toggle="collapse"][aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+
+.btn[data-bs-toggle="collapse"] i {
+    transition: transform 0.3s ease;
+}

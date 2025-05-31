@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>Quiz</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/quiz.css') }}">
+    <style>
+        .question-container {
+            display: none;
+        }
+        .question-container.active {
+            display: block;
+        }
+        .nav-button {
+            margin: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- Add hidden input for quiz data -->
+    <input type="hidden" id="quizData" 
+           data-duration="{{ quiz.time_duration }}"
+           data-quiz-id="{{ quiz.id }}">
+
+    <div class="timer" id="timer">Time Left: 00:00:00</div>
+    
+    <form method="POST" action="{{ url_for('submit_quiz', quiz_id=quiz.id) }}" id="quizForm">
+        {% for question in questions %}
+        <div class="question-container" id="question-{{ loop.index0 }}">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="question-number">Question {{ loop.index }}/{{ total_questions }}</span>
+                    <span class="marks" style="margin-left: 20px;">Marks: <strong>{{ question.weightage }}</strong></span>
+                </div>
+            </div>
+            <h4 class="mt-4 mb-4">{{ question.question_statement }}</h4>
+            
+            {% for i in range(1, 5) %}
+            <div class="option">
+                <input type="radio" 
+                       hidden
+                       name="answer_{{ question.id }}" 
+                       id="option{{ question.id }}_{{ i }}" 
+                       value="{{ i }}"
+                       {% if request.form.get('answer_' ~ question.id) == i %}checked{% endif %}>
+                <label class="option-label" for="option{{ question.id }}_{{ i }}">
+                    {{ question['option' ~ i] }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        
+        <div class="navigation-buttons text-center">
+            <button type="button" class="btn btn-secondary nav-button" id="prevButton">Previous</button>
+            <button type="button" class="btn btn-secondary nav-button" id="nextButton">Next</button>
+            <button type="submit" class="btn btn-success submit-btn" id="submitButton" style="display: none;">Submit Quiz</button>
+        </div>
+    </form>
+{% endblock %}
+
+{% block script %}
+    <script>
+        const quizDataElement = document.getElementById('quizData');
+        const quizDuration = parseInt(quizDataElement.dataset.duration) * 60; // Convert minutes to seconds
+
+        console.log(`Quiz Duration (in seconds): ${quizDuration}`); // Debugging log
+
+        // Initialize quiz when page loads
+        window.onload = function() {
+            // Check if timer is already running
+            if (!localStorage.getItem('quizStarted')) {
+                initializeQuiz();
+            } else {
+                startTimer();
+                loadSavedAnswers();
+            }
+        };
+
+        function initializeQuiz() {
+            // Clear any existing quiz data
+            localStorage.clear();
+            localStorage.setItem('quizStarted', 'true');
+            localStorage.setItem('quizStartTime', Date.now().toString()); // Reset start time
+            console.log(`Quiz Start Time: ${localStorage.getItem('quizStartTime')}`); // Debugging log
+            startTimer();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const totalQuestions = {{ total_questions }};
+            let currentQuestionIndex = 0;
+
+            function showQuestion(index) {
+                document.querySelectorAll('.question-container').forEach((container, i) => {
+                    container.classList.toggle('active', i === index);
+                });
+                document.getElementById('prevButton').style.display = index === 0 ? 'none' : 'inline-block';
+                document.getElementById('nextButton').style.display = index === totalQuestions - 1 ? 'none' : 'inline-block';
+                document.getElementById('submitButton').style.display = index === totalQuestions - 1 ? 'inline-block' : 'none';
+            }
+
+            document.getElementById('prevButton').addEventListener('click', function() {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    showQuestion(currentQuestionIndex);
+                }
+            });
+
+            document.getElementById('nextButton').addEventListener('click', function() {
+                if (currentQuestionIndex < totalQuestions - 1) {
+                    currentQuestionIndex++;
+                    showQuestion(currentQuestionIndex);
+                }
+            });
+
+            showQuestion(currentQuestionIndex);
+        });
+
+        function startTimer() {
+            let timerInterval;
+
+            function updateTimer() {
+                const startTime = parseInt(localStorage.getItem('quizStartTime'));
+                const now = Date.now();
+                const elapsedSeconds = Math.floor((now - startTime) / 1000);
+                const remainingSeconds = quizDuration - elapsedSeconds;
+
+                console.log(`Start Time: ${startTime}, Now: ${now}, Elapsed Seconds: ${elapsedSeconds}, Remaining Seconds: ${remainingSeconds}`); // Debugging log
+
+                if (remainingSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert('Time is up! Submitting quiz...');
+                    document.getElementById('quizForm').submit();
+                    return;
+                }
+
+                const hours = Math.floor(remainingSeconds / 3600);
+                const minutes = Math.floor((remainingSeconds % 3600) / 60);
+                const seconds = remainingSeconds % 60;
+
+                const timeString = `Time Left: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                document.getElementById('timer').textContent = timeString;
+            }
+
+            // Start the timer interval
+            timerInterval = setInterval(updateTimer, 1000);
+            updateTimer(); // Call it once immediately to set the initial time
+        }
+
+        function loadSavedAnswers() {
+            const totalQuestions = {{ total_questions }};
+            for (let i = 0; i < totalQuestions; i++) {
+                const answer = localStorage.getItem(`answer_${i + 1}`);
+                if (answer) {
+                    document.querySelector(`input[name="answer_${i + 1}"][value="${answer}"]`).checked = true;
+                }
+            }
+        }
+
+        // Add event listener to clear local storage on form submission
+        document.getElementById('quizForm').addEventListener('submit', function() {
+            localStorage.clear(); // Clear all local storage data
+        });
+    </script>
+{% endblock %} 

@@ -1,0 +1,6 @@
+Flask
+Flask-Login
+SQLAlchemy
+pandas
+requests
+PyPDF2
